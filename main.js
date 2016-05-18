@@ -30,9 +30,6 @@ io.on('connection', function(socket){
     ctrlByte.writeUInt8(data.ctrlByte,0);
     console.log('speed: ' + data.speed + ', steer: ' + data.steer + 
         ', ControlByte: ' + ctrlByte.toString('hex'));
-    //write(ctrlByte);
-    var ctrlByte = new Buffer(1);
-    ctrlByte.writeUInt8(data,0);
 
     // write data to serialport
     sp.open(function(err) {
