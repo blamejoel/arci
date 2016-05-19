@@ -4,16 +4,6 @@ var SerialPort = require("serialport").SerialPort;
 var sp = new SerialPort("/dev/ttyAMA0", {baudrate: 9600}, false);
 console.log("starting serialport...")
 
-// tell ar-ci we're ready to rock!
-var readyByte = new Buffer(1);
-readyByte.writeUInt8(0x70,0);
-sp.open(function(err) {
-  sp.write(readyByte, function(err, res) {
-    if(err) {console.log(err);}
-    sp.close();
-  });
-});
-
 // setup webserver
 var app = require('express')();
 var express = require('express');
@@ -27,6 +17,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 // user connect event
 io.on('connection', function(socket){
   console.log('a user connected');
+
+  // tell ar-ci we're ready to rock!
+  var readyByte = new Buffer(1);
+  readyByte.writeUInt8(0x70,0);
+  sp.open(function(err) {
+    sp.write(readyByte, function(err, res) {
+      if(err) {console.log(err);}
+      sp.close();
+    });
+  });
 
   // user disconnect event
   socket.on('disconnect', function(){
@@ -52,7 +52,7 @@ io.on('connection', function(socket){
 });
 
 http.listen(5000, function(){
-  //console.log('listening on *:5000');
+  console.log('listening on *:5000');
 });
 
 /*
