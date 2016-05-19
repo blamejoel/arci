@@ -1,6 +1,14 @@
 var socket = io();
+var debug_url = 'http://ar-ci:5000/';
+var curr_url = window.location.href;
+window.onload = function(){
+  if(curr_url.localeCompare(debug_url) != 0){
+    window.location.assign(debug_url);
+  }
+}
 
 console.log("touchscreen is", VirtualJoystick.touchScreenAvailable() ? "available" : "not available");
+console.log(curr_url);
 
 var joystick	= new VirtualJoystick({
   container	: document.getElementById('container'),
@@ -8,9 +16,11 @@ var joystick	= new VirtualJoystick({
   //limitStickTravel	: true,
   //stickRadius	: 150,
 });
+
 joystick.addEventListener('touchStart', function(){
   console.log('down')
 })
+
 joystick.addEventListener('touchEnd', function(){
   console.log('up')
 })
@@ -39,7 +49,8 @@ setInterval(function(){
       lastSpeed = speed;
       lastSteer = steer;
     }
-}, 1/30 * 1000);
+//}, 1/30 * 1000);
+}, 100);
 
 function getSpeed(speed){
   if(speed > 0){
