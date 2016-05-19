@@ -1,11 +1,11 @@
 var socket = io();
 var debug_url = 'http://ar-ci:5000/';
 var curr_url = window.location.href;
-window.onload = function(){
+/*window.onload = function(){
   if(curr_url.localeCompare(debug_url) != 0){
     window.location.assign(debug_url);
   }
-}
+}*/
 
 console.log("touchscreen is", VirtualJoystick.touchScreenAvailable() ? "available" : "not available");
 console.log(curr_url);
@@ -50,26 +50,28 @@ setInterval(function(){
       lastSteer = steer;
     }
 //}, 1/30 * 1000);
-}, 100);
+}, 10);
 
 function getSpeed(speed){
   if(speed > 0){
     speed = -Math.abs(speed);
-    speed = (speed < -15 ? -15 : speed);
+    speed = (speed < -10 ? -10 : speed);
   }
   else{
     speed = Math.abs(speed);
-    speed = (speed > 15 ? 15 : speed);
+    speed = (speed > 10 ? 10 : speed);
   }
   return speed;
 }
 
 function getSteer(steer){
   if(steer > 0){
-    steer = (steer > 3 ? 3 : steer);
+    steer = -Math.abs(steer);
+    steer = (steer < -3 ? -3 : steer);
   }
   else{
-    steer = (steer < -3 ? -3 : steer);
+    steer = Math.abs(steer);
+    steer = (steer > 3 ? 3 : steer);
   }
   return steer;
 }
