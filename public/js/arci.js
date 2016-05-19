@@ -76,12 +76,7 @@ function getSteer(steer){
 
 function getByte(steer, speed){
   var ctrlByte;
-  if(steer > 0){
-    steer += 4;
-  }
-  else{
-    steer += 3;
-  }
+  steer += 3;
   if(speed < 0){
     speed = Math.abs(speed);
     ctrlByte = ((steer | 0x08) << 4) | speed;

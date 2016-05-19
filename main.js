@@ -4,6 +4,16 @@ var SerialPort = require("serialport").SerialPort;
 var sp = new SerialPort("/dev/ttyAMA0", {baudrate: 9600}, false);
 console.log("starting serialport...")
 
+// tell ar-ci we're ready to rock!
+var readyByte = new Buffer(1);
+readyByte.writeUInt8(0x70,0);
+sp.open(function(err) {
+  sp.write(readyByte, function(err, res) {
+    if(err) {console.log(err);}
+    sp.close();
+  });
+});
+
 // setup webserver
 var app = require('express')();
 var express = require('express');
@@ -13,7 +23,6 @@ var io = require('socket.io')(http);
 
 // set static files directory
 app.use(express.static(path.join(__dirname, 'public')));
-
 
 // user connect event
 io.on('connection', function(socket){
