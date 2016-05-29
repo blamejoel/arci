@@ -40,15 +40,21 @@
 		<div id="info">
 			<span id="result"></span>
 		</div> 
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- <script> -->
+    <!--   var socket = io(); -->
+    <!-- </script> -->
 		<script src="js/virtualjoystick.js"></script>
-		<script>
+		<script src="js/arci.js"></script>
+		<!--<script>
+      console.log("Something went wrong....");
 			console.log("touchscreen is", VirtualJoystick.touchScreenAvailable() ? "available" : "not available");
 	
 			var joystick	= new VirtualJoystick({
 				container	: document.getElementById('container'),
 				mouseSupport	: true,
-				limitStickTravel	: true,
-				stickRadius	: 150,
+				//limitStickTravel	: true,
+				//stickRadius	: 150,
 			});
 			joystick.addEventListener('touchStart', function(){
 				console.log('down')
@@ -69,6 +75,6 @@
 					//+ (joystick.left()	? ' left'	: '')
 					//+ (joystick.down()	? ' down' 	: '')	
 			}, 1/30 * 1000);
-		</script>
+    </script>-->
 	</body>
 </html>
