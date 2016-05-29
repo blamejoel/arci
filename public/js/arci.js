@@ -31,7 +31,11 @@ setInterval(function(){
     //+ (joystick.left()	? ' left'	: '')
     //+ (joystick.down()	? ' down' 	: '')	
     if(lastSpeed != speed || lastSteer != steer){
-      socket.emit('input', {speed: speed, steer: steer});
+      socket.emit('input', {
+        speed: speed, 
+        steer: steer, 
+        ctrlByte: getByte(steer,speed)
+      });
       lastSpeed = speed;
       lastSteer = steer;
     }
@@ -51,10 +55,28 @@ function getSpeed(speed){
 
 function getSteer(steer){
   if(steer > 0){
-    steer = (steer > 7 ? 7 : steer);
+    steer = (steer > 3 ? 3 : steer);
   }
   else{
-    steer = (steer < -7 ? -7 : steer);
+    steer = (steer < -3 ? -3 : steer);
   }
   return steer;
+}
+
+function getByte(steer, speed){
+  var ctrlByte;
+  if(steer > 0){
+    steer += 4;
+  }
+  else{
+    steer += 3;
+  }
+  if(speed < 0){
+    speed = Math.abs(speed);
+    ctrlByte = ((steer | 0x08) << 4) | speed;
+  }
+  else {
+    ctrlByte = (steer << 4) | speed;
+  }
+  return ctrlByte;
 }
