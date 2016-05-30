@@ -17,18 +17,25 @@
 #include <ucr/pwm_servo.c>
 #include <ucr/arci-timer.h>
 
-#define PERIOD 40
+#define PERIOD 20
 #define FREQ 50.0
 #define STEP_LEFT 30
 #define STEP_RIGHT 30
-#define STEP_SPEED 1017
 #define MIDDLE 1450
-#define SLOW_SPEED 6000
-#define MAX_SPEED 20250
+// @ 50Hz
+//#define SLOW_SPEED 6000
+//#define MAX_SPEED 20250
+//#define STEP_SPEED 101
+
+// @ 250Hz
+#define MAX_SPEED 4040
+#define STEP_SPEED 171
+#define SLOW_SPEED 1640
+
+unsigned char version = '7';
 enum States { START, INIT, WAIT } state;      // state vars
 unsigned char tmp, ready;
-unsigned char version = '5';
-unsigned short speed, steer;
+unsigned short steer, speed;
 
 void Tick() {
     static unsigned char top, bottom, last;
@@ -51,10 +58,7 @@ void Tick() {
             else
             if (USART_HasReceived(0)) {
                 tmp = USART_Receive(0);
-                if(((tmp & 0xF0) >> 4) > 7)
-                    top = 4;
-                else
-                    top = (tmp & 0x70) >> 4;
+                top = (tmp & 0x70) >> 4;
                 bottom = (tmp & 0x0F);
                 PORTC = bottom | (top << 4);
                 /*if (USART_IsSendReady(0)) {
@@ -159,10 +163,7 @@ void Tick() {
                     speed = 0;
                     break;
             }
-            if (top != last) {
-                move_motor(FREQ,speed);
-                last = top;
-            }
+            move_motor(FREQ,speed);
             break;
         default:
             break;
