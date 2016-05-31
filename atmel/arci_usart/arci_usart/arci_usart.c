@@ -22,6 +22,7 @@
 #define STEP_LEFT 30
 #define STEP_RIGHT 30
 #define MIDDLE 1450
+
 // @ 50Hz
 //#define SLOW_SPEED 6000
 //#define MAX_SPEED 20250
@@ -31,20 +32,23 @@
 #define MAX_SPEED 4040
 #define STEP_SPEED 171
 #define SLOW_SPEED 1640
+#define MAX_REV (SLOW_SPEED + (STEP_SPEED*2))
 
-unsigned char version = '7';
+unsigned char version = '0';
 enum States { START, INIT, WAIT } state;      // state vars
-unsigned char tmp, ready;
-unsigned short steer, speed;
+unsigned char tmp, ready;               // tmp value to read incoming data
+unsigned short steer, speed;            // steering/speed values to servo/motor
+unsigned char top, bottom;              // steering/speed input from user
+unsigned char rev;                      // reverse flag
 
 void Tick() {
-    static unsigned char top, bottom, last;
+    static unsigned char last;          // steering var
     // State Transitions
     switch (state) {
         case START:
             state = INIT; break;        // transition to INIT state
         case INIT:
-            speed = ready = tmp = 0;
+            ready = tmp = rev = 0;
             top = 0x40;
             bottom = 0x00;
             move_motor(0,0);
@@ -58,8 +62,11 @@ void Tick() {
             else
             if (USART_HasReceived(0)) {
                 tmp = USART_Receive(0);
+
+                rev = (tmp & 0x80) ? 1 : 0;
                 top = (tmp & 0x70) >> 4;
                 bottom = (tmp & 0x0F);
+
                 PORTC = bottom | (top << 4);
                 /*if (USART_IsSendReady(0)) {
                     USART_Send(tmp,0);
@@ -163,7 +170,15 @@ void Tick() {
                     speed = 0;
                     break;
             }
-            move_motor(FREQ,speed);
+            if (rev) {
+                move_motor(FREQ,0);
+                speed = (bottom > 3) ? MAX_REV : speed;
+                move_motor_reverse(FREQ,speed);
+            }
+            else {
+                move_motor_reverse(FREQ,0);
+                move_motor(FREQ,speed);
+            }
             break;
         default:
             break;
