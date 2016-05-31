@@ -10,16 +10,16 @@
     unsigned char incoming_data;    // tmp value to read incoming data
 */
 
-int TickFct_D (int state) {
+int TickFct_D(int state) {
     // State Transitions
-    switch (state) {
+    switch(state) {
         case START_D:
             state = INIT_D; break;        // transition to INIT_D state
         case INIT_D:
             incoming_data = 0;
             state = WAIT_D; break;        // transition to WAIT_D state
         case WAIT_D:
-            if (USART_HasReceived(0)) {
+            if(USART_HasReceived(0)) {
                 data_avail = 1;
                 state = READ_D;
                 /*if (USART_IsSendReady(0)) {
@@ -37,7 +37,7 @@ int TickFct_D (int state) {
             break;
     }
     // State Actions
-    switch (state) {
+    switch(state) {
         case READ_D:
             incoming_data = USART_Receive(0);
             break;

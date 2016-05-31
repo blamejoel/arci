@@ -11,20 +11,20 @@
     unsigned char ready;            // connected to client flag
 */
 
-int TickFct_S (int state) {
+int TickFct_S(int state) {
     static unsigned short servo_high;   // pwm high time
     static unsigned char cur_angle;         // steering angle nibble
     static unsigned char last;          // steering var
     // State Transitions
-    switch (state) {
+    switch(state) {
         case START_S:
             state = INIT_S; break;      // transition to INIT_S state
         case INIT_S:
-            cur_angle = 0x40;               // 'zero' out steering
+            cur_angle = 0x30;               // 'zero' out steering
             move_servo(0,0);
             state = WAIT_S; break;        // transition to WAIT_S state
         case WAIT_S:
-            if (!ready) {
+            if(!ready) {
                 move_servo(0,0);
             }
             else {
@@ -39,7 +39,7 @@ int TickFct_S (int state) {
             break;
     }
     // State Actions
-    switch (state) {
+    switch(state) {
         case UPDATE_S:
             switch(cur_angle) {
                 case 0:
@@ -55,15 +55,12 @@ int TickFct_S (int state) {
                     servo_high = MIDDLE;
                     break;
                 case 4:
-                    servo_high = MIDDLE;
-                    break;
-                case 5:
                     servo_high = (MIDDLE - (STEP_LEFT));
                     break;
-                case 6:
+                case 5:
                     servo_high = (MIDDLE - (STEP_LEFT*2));
                     break;
-                case 7:
+                case 6:
                     servo_high = (MIDDLE - (STEP_LEFT*3));
                     break;
                 default:
@@ -73,7 +70,7 @@ int TickFct_S (int state) {
 
             // following block allows servo to 'relax' after receiving direction
             // new angle is different from previous angle
-            if (last != cur_angle) {
+            if(last != cur_angle) {
                 last = cur_angle;
                 move_servo(FREQ,servo_high);
             }

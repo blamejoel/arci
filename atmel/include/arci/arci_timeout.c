@@ -15,9 +15,9 @@
 #define ST_READY    2   // connection enabled
 #define ST_DISCON   3   // timeout
 
-int TickFct_T (int state) {
+int TickFct_T(int state) {
     static unsigned char st_led;        // status LED
-    static unsigned short elapsed
+    static unsigned short elapsed;
     // State Transitions
     switch (state) {
         case START_T:
@@ -28,7 +28,7 @@ int TickFct_T (int state) {
             st_led = ST_OFFLINE;
             state = WAIT_T; break;      // transition to WAIT_T state
         case NO_DATA_D:
-            if (data_avail) {
+            if(data_avail) {
                 ready = 1;
                 st_led = ST_READY;
                 state = DATA_D;
@@ -38,7 +38,7 @@ int TickFct_T (int state) {
             }
             break;
         case DATA_D:
-            if (!data_avail) {
+            if(!data_avail) {
                 elapsed = 0;
                 state = NO_DATA_D;
             }
@@ -48,9 +48,9 @@ int TickFct_T (int state) {
             break;
     }
     // State Actions
-    switch (state) {
+    switch(state) {
         case NO_DATA_D:
-            if (elapsed > MAX_TIMEOUT) {
+            if(elapsed > MAX_TIMEOUT) {
                 ready = 0;
                 st_led = ST_DISCON;
             }

@@ -11,12 +11,12 @@
     unsigned char ready;            // connected to client flag
 */
 
-int TickFct_M (int state) {
+int TickFct_M(int state) {
     static unsigned short motor_high;      // pwm high time
     static unsigned char speed;            // speed input nibble
     static unsigned char rev;              // reverse flag
     // State Transitions
-    switch (state) {
+    switch(state) {
         case START_M:
             state = INIT_M; break;
         case INIT_M:
@@ -24,7 +24,7 @@ int TickFct_M (int state) {
             move_motor(0,0);
             state = WAIT_M; break;
         case WAIT_M:
-            if (!ready) {
+            if(!ready) {
                 move_motor(0,0);
             }
             else {
@@ -40,7 +40,7 @@ int TickFct_M (int state) {
             break;
     }
     // State Actions
-    switch (state) {
+    switch(state) {
         case MOVE_M:
             switch(speed) {
                 case 0:
@@ -53,40 +53,40 @@ int TickFct_M (int state) {
                     motor_high = (SLOW_SPEED + STEP_SPEED);
                     break;
                 case 3:
-                    motor_high = (SLOW_SPEED + (STEP_SPEED * (speed - 1)));
+                    motor_high = (SLOW_SPEED +(STEP_SPEED *(speed - 1)));
                     break;
                 case 4:
-                    motor_high = (SLOW_SPEED + (STEP_SPEED * (speed - 1)));
+                    motor_high = (SLOW_SPEED +(STEP_SPEED *(speed - 1)));
                     break;
                 case 5:
-                    motor_high = (SLOW_SPEED + (STEP_SPEED * (speed - 1)));
+                    motor_high = (SLOW_SPEED +(STEP_SPEED *(speed - 1)));
                     break;
                 case 6:
-                    motor_high = (SLOW_SPEED + (STEP_SPEED * (speed - 1)));
+                    motor_high = (SLOW_SPEED +(STEP_SPEED *(speed - 1)));
                     break;
                 case 7:
-                    motor_high = (SLOW_SPEED + (STEP_SPEED * (speed - 1)));
+                    motor_high = (SLOW_SPEED +(STEP_SPEED *(speed - 1)));
                     break;
                 case 8:
-                    motor_high = (SLOW_SPEED + (STEP_SPEED * (speed - 1)));
+                    motor_high = (SLOW_SPEED +(STEP_SPEED *(speed - 1)));
                     break;
                 case 9:
-                    motor_high = (SLOW_SPEED + (STEP_SPEED * (speed - 1)));
+                    motor_high = (SLOW_SPEED +(STEP_SPEED *(speed - 1)));
                     break;
                 case 10:
-                    motor_high = (SLOW_SPEED + (STEP_SPEED * (speed - 1)));
+                    motor_high = (SLOW_SPEED +(STEP_SPEED *(speed - 1)));
                     break;
                 case 11:
-                    motor_high = (SLOW_SPEED + (STEP_SPEED * (speed - 1)));
+                    motor_high = (SLOW_SPEED +(STEP_SPEED *(speed - 1)));
                     break;
                 case 12:
-                    motor_high = (SLOW_SPEED + (STEP_SPEED * (speed - 1)));
+                    motor_high = (SLOW_SPEED +(STEP_SPEED *(speed - 1)));
                     break;
                 case 13:
-                    motor_high = (SLOW_SPEED + (STEP_SPEED * (speed - 1)));
+                    motor_high = (SLOW_SPEED +(STEP_SPEED *(speed - 1)));
                     break;
                 case 14:
-                    motor_high = (SLOW_SPEED + (STEP_SPEED * (speed - 1)));
+                    motor_high = (SLOW_SPEED +(STEP_SPEED *(speed - 1)));
                     break;
                 case 15:
                     motor_high = MAX_SPEED;
@@ -95,7 +95,7 @@ int TickFct_M (int state) {
                     motor_high = 0;
                     break;
             }
-            if (rev) {
+            if(rev) {
                 // stop fwd direction
                 move_motor(0,0);
 
