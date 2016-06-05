@@ -2,8 +2,8 @@
     AR-CI Motor Control
 */
 
-#include <arci/pwm_servo.c>
-#include <arci/config.h>
+//#include <arci/pwm_servo.c>
+//#include <arci/arci_config.h>
 
 /* REFERENCE VARS FROM OTHER FILES
     enum MOTOR_STATES { START_M, INIT_M, WAIT_M, MOVE_M };
@@ -21,13 +21,20 @@ int TickFct_M(int state) {
             state = INIT_M; break;
         case INIT_M:
             speed = 0;
-            move_motor(0,0);
             state = WAIT_M; break;
         case WAIT_M:
             if(!ready) {
-                move_motor(0,0);
+                if(rev) {
+                    move_motor_reverse(FREQ,SLOW_SPEED);
+                }
+                else {
+                    move_motor(FREQ,SLOW_SPEED);
+                }
+                move_motor(FREQ,0);
+                motor_off();
             }
             else {
+                motor_on();
                 rev = (incoming_data & 0x80) ? 1 : 0;
                 speed = (incoming_data & 0x0F);
                 state = MOVE_M;
@@ -97,19 +104,28 @@ int TickFct_M(int state) {
             }
             if(rev) {
                 // stop fwd direction
-                move_motor(0,0);
+                move_motor(FREQ,SLOW_SPEED);
+                move_motor(FREQ,0);
 
                 // limit reverse speed
-                motor_high = (bottom > 3) ? MAX_REV : motor_high;
+                motor_high = (speed > 3) ? MAX_REV : motor_high;
+                if(speed == 0) {
+                    move_motor_reverse(FREQ,SLOW_SPEED);
+                }
                 move_motor_reverse(FREQ,motor_high);
             }
             else {
                 // stop reverse direction
-                move_motor_reverse(0,0);
+                move_motor_reverse(FREQ,SLOW_SPEED);
+                move_motor_reverse(FREQ,0);
+                if(speed == 0) {
+                    move_motor(FREQ,SLOW_SPEED);
+                }
                 move_motor(FREQ,motor_high);
             }
             break;
         default:
             break;
     }
+    return state;
 }

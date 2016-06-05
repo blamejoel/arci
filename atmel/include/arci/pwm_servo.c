@@ -102,6 +102,11 @@ void motor_on() {
     move_motor(0,0);
 }
 
+void motor_off() {
+    TCCR1A = 0x00;
+    TCCR1B = 0x00;
+}
+
 void servo_off() {
     TCCR3A = 0x00;
     TCCR3B = 0x00;

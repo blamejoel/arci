@@ -8,7 +8,7 @@
 #define TIMER_H
 
 #include <avr/interrupt.h>
-#include <ucr/scheduler.h>
+//#include <arci/arci_config.h>
 
 volatile unsigned char TimerFlag = 0; // TimerISR() sets this to 1. C programmer should clear to 0.
 
@@ -55,14 +55,6 @@ void TimerOff() {
 
 void TimerISR() {
 	TimerFlag = 1;
-  unsigned short i;
-  for(i = 0; i < numTasks; i++) {
-    if(tasks[i]->elapsedTime == tasks[i]->period) {
-      tasks[i]->state = tasks[i]->TickFct(tasks[i]->state);
-      tasks[i]->elapsedTime = 0;
-    }
-    tasks[i]->elapsedTime += 1;
-  }
 }
 
 // In our approach, the C programmer does not touch this ISR, but rather TimerISR()

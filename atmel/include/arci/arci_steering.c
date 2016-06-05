@@ -2,8 +2,8 @@
     AR-CI Steering Control
 */
 
-#include <arci/pwm_servo.c>
-#include <arci/config.h>
+//#include <arci/pwm_servo.c>
+//#include <arci/arci_config.h>
 
 /* REFERENCE VARS FROM OTHER FILES
     enum SERVO_STATES { START_S, INIT_S, WAIT_S, UPDATE_S };
@@ -12,22 +12,26 @@
 */
 
 int TickFct_S(int state) {
-    static unsigned short servo_high;   // pwm high time
+    static unsigned short servo_high;       // pwm high time
     static unsigned char cur_angle;         // steering angle nibble
-    static unsigned char last;          // steering var
+    // static unsigned char last;           // steering var
     // State Transitions
     switch(state) {
         case START_S:
-            state = INIT_S; break;      // transition to INIT_S state
+            state = INIT_S; break;          // transition to INIT_S state
         case INIT_S:
             cur_angle = 0x30;               // 'zero' out steering
-            move_servo(0,0);
-            state = WAIT_S; break;        // transition to WAIT_S state
+            if(ready) {
+                servo_on();
+                state = UPDATE_S;
+            }
+        break;
         case WAIT_S:
             if(!ready) {
-                move_servo(0,0);
+                // servo_off();
             }
             else {
+                // servo_on();
                 cur_angle = (incoming_data & 0x70) >> 4;
                 state = UPDATE_S;
             }
@@ -67,7 +71,9 @@ int TickFct_S(int state) {
                     servo_high = MIDDLE;
                     break;
             }
+            move_servo(FREQ,servo_high);    // comment out if using block below!
 
+            /*
             // following block allows servo to 'relax' after receiving direction
             // new angle is different from previous angle
             if(last != cur_angle) {
@@ -78,8 +84,10 @@ int TickFct_S(int state) {
             else {
                 move_servo(0,0);
             }
+            */
             break;
         default:
             break;
     }
+    return state;
 }
