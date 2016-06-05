@@ -2,7 +2,7 @@
     AR-CI Timeout Control
 */
 
-//#include <arci/arci_config.h>
+#include "arci_config.h"
 
 /* REFERENCE VARS FROM OTHER FILES
     enum TIME_STATES { START_T, INIT_T, NO_DATA_D, DATA_D };
@@ -28,6 +28,7 @@ int TickFct_T(int state) {
             elapsed = 0;
             ready = 0;
             st_led = ST_OFFLINE;
+            // if(ready_cnt >= 9 || wired) {
             if(ready_cnt >= 9) {
                 state = NO_DATA_D;
             }
@@ -48,7 +49,8 @@ int TickFct_T(int state) {
                 ready = 0;
                 state = ATTN_D;
             }
-            else if(!(~PINA & 0x03) && data_avail) {
+            // else if(!(~PINA & 0x03) && (data_avail | wired)) {
+            else if(!(~PINA & 0x03) && (data_avail)) {
                 ready = 1;
                 st_led = ST_READY;
                 state = DATA_D;
@@ -58,6 +60,7 @@ int TickFct_T(int state) {
             }
             break;
         case DATA_D:
+            // if(!data_avail && !wired) {
             if(!data_avail) {
                 elapsed = 0;
                 state = NO_DATA_D;

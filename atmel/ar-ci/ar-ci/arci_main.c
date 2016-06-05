@@ -1,24 +1,24 @@
 #include <avr/io.h>
-#include <ucr/usart_ATmega1284.h>
-#include <arci/arci-scheduler.h>
-#include <arci/arci_config.h>
 #include <arci/pwm_servo.c>
 #include <arci/arci_data.c>
 #include <arci/arci_motor.c>
+#include <arci/arci-scheduler.h>
 #include <arci/arci_steering.c>
 #include <arci/arci_timeout.c>
 #include <arci/arci-timer.h>
+//#include <arci/arci_wired.c>
 
 unsigned char version = '7';
 
 int main(void) {
-    DDRA = 0x00; PORTA = 0xFF;
+    DDRA = 0xC0; PORTA = 0x3F;
     DDRB = 0xFF; PORTB = 0x00;
     DDRC = 0xFF; PORTC = 0x00;
     DDRD = 0xFF; PORTD = 0x00;
 
     unsigned char SystemPeriodCalc = PERIOD;
     unsigned char TimeoutTaskCalc = PERIOD_T;
+    //unsigned char WiredTaskCalc = PERIOD_W;
     
     unsigned char GCD = PERIOD;
 
@@ -27,8 +27,11 @@ int main(void) {
             Steering_Period;
     Data_Period = Motor_Period = Steering_Period = (SystemPeriodCalc/GCD);
     unsigned char Timeout_Period = (TimeoutTaskCalc/GCD);
+    //unsigned char Wired_Period = (WiredTaskCalc/GCD);
 
     // Create tasks and insert into an array of tasks
+    //static task Data_Task, Motor_Task, Steering_Task, Timeout_Task, Wired_Task;
+    //task *tasks[] = { &Data_Task, &Motor_Task, &Steering_Task, &Timeout_Task, &Wired_Task };
     static task Data_Task, Motor_Task, Steering_Task, Timeout_Task;
     task *tasks[] = { &Data_Task, &Motor_Task, &Steering_Task, &Timeout_Task };
 
@@ -55,6 +58,11 @@ int main(void) {
     Timeout_Task.period = Timeout_Period;
     Timeout_Task.elapsedTime = 0;
     Timeout_Task.TickFct = &TickFct_T;
+
+    /*Wired_Task.state = START_W;
+    Wired_Task.period = Wired_Period;
+    Wired_Task.elapsedTime = 0;
+    Wired_Task.TickFct = &TickFct_W;*/
 
     TimerSet(PERIOD);
     TimerOn();

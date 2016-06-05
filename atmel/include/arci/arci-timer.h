@@ -8,7 +8,7 @@
 #define TIMER_H
 
 #include <avr/interrupt.h>
-//#include <arci/arci_config.h>
+#include "arci_config.h"
 
 volatile unsigned char TimerFlag = 0; // TimerISR() sets this to 1. C programmer should clear to 0.
 

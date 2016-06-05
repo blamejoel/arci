@@ -1,7 +1,4 @@
-#define CLOCK_MHZ 8000000
-#define PRESCALER 64
-#define TIMER_CLK 125000
-#define TIMER_PERIOD 8
+#include "pwm_servo.h"
 
 // usefull math -> 1/frequency = period in ms
 

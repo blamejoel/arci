@@ -2,8 +2,8 @@
     AR-CI Motor Control
 */
 
-//#include <arci/pwm_servo.c>
-//#include <arci/arci_config.h>
+#include "pwm_servo.h"
+#include "arci_config.h"
 
 /* REFERENCE VARS FROM OTHER FILES
     enum MOTOR_STATES { START_M, INIT_M, WAIT_M, MOVE_M };
@@ -35,8 +35,14 @@ int TickFct_M(int state) {
             }
             else {
                 motor_on();
-                rev = (incoming_data & 0x80) ? 1 : 0;
-                speed = (incoming_data & 0x0F);
+                // if(!wired) {
+                    rev = (incoming_data & 0x80) ? 1 : 0;
+                    speed = (incoming_data & 0x0F);
+                // }
+                // else {
+                //     rev = (wired & 0x80) ? 1 : 0;
+                //     speed = (wired & 0x0F);
+                // }
                 state = MOVE_M;
             }
             break;

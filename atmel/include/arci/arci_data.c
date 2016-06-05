@@ -2,8 +2,8 @@
     AR-CI Data Control
 */
 
-//#include <arci/arci_config.h>
-//#include <ucr/usart_ATmega1284.h>
+#include "arci_config.h"
+#include <ucr/usart_ATmega1284.h>
 
 /* REFERENCE VARS FROM OTHER FILES
     enum DATA_STATES { START_D, INIT_D, WAIT_D, READ_D };
@@ -21,7 +21,8 @@ int TickFct_D(int state) {
         case WAIT_D:
             if(USART_HasReceived(0)) {
                 data_avail = 1;
-                state = READ_D;
+                // if(!wired)
+                    state = READ_D;
                 /*if (USART_IsSendReady(0)) {
                     USART_Send(incoming_data,0);
                 }*/

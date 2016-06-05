@@ -2,8 +2,8 @@
     AR-CI Steering Control
 */
 
-//#include <arci/pwm_servo.c>
-//#include <arci/arci_config.h>
+#include "pwm_servo.h"
+#include "arci_config.h"
 
 /* REFERENCE VARS FROM OTHER FILES
     enum SERVO_STATES { START_S, INIT_S, WAIT_S, UPDATE_S };
@@ -14,7 +14,7 @@
 int TickFct_S(int state) {
     static unsigned short servo_high;       // pwm high time
     static unsigned char cur_angle;         // steering angle nibble
-    // static unsigned char last;           // steering var
+    static unsigned char last;           // steering var
     // State Transitions
     switch(state) {
         case START_S:
@@ -32,7 +32,10 @@ int TickFct_S(int state) {
             }
             else {
                 // servo_on();
-                cur_angle = (incoming_data & 0x70) >> 4;
+                // if(!wired)
+                    cur_angle = (incoming_data & 0x70) >> 4;
+                // else
+                //     cur_angle = wired & 0x70;
                 state = UPDATE_S;
             }
             break;
@@ -71,9 +74,9 @@ int TickFct_S(int state) {
                     servo_high = MIDDLE;
                     break;
             }
-            move_servo(FREQ,servo_high);    // comment out if using block below!
+            // move_servo(FREQ,servo_high);    // comment out if using block below!
 
-            /*
+
             // following block allows servo to 'relax' after receiving direction
             // new angle is different from previous angle
             if(last != cur_angle) {
@@ -84,7 +87,7 @@ int TickFct_S(int state) {
             else {
                 move_servo(0,0);
             }
-            */
+
             break;
         default:
             break;
