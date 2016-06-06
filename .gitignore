@@ -38,3 +38,6 @@ node_modules
 *.cproj
 *.xml
 Debug/
+
+# Video
+*.mp4
