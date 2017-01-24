@@ -1,29 +1,56 @@
-// setup webserver
-express = require('express'); // web server
-app = express();
-server = require('http').createServer(app);
-io = require('socket.io').listen(server);   // web socket server
-
-server.listen(5000);  // start the webserver on port 8080
-app.use(express.static('public'));  // tell server that ./public contains
-                                    // the static webpage
 // open serial port
-//var SerialPort = require('serialport').SerialPort
-//var serialPort = new SerialPort('/dev/ttyACM0', { baudrate: 9600 });
+var serialPort = require("serialport");
+var SerialPort = require("serialport").SerialPort;
+var sp = new SerialPort("/dev/ttyAMA0", {baudrate: 9600}, false);
+console.log("starting serialport...")
 
-// define websocket behavior
-var speed = 0;
-io.sockets.on('connection', function (socket) { // gets called on a new client conn
-  socket.emit('speed', {value: speed}); // send the new client the current speed
-  socket.on('speed', function (data) { // makes socket react to speed packets by 
-                                      // calling this function
-    speed = data.value; // updates speed from the data object
-    var buf = new Buffer(1); // new 1-byte buffer
-    buf.writeUInt8(speed, 0); // writes speed value to buffer
-    //serialPort.write(buf); // transmits the buffer to the serial port
+// setup webserver
+var app = require('express')();
+var express = require('express');
+var path = require('path');
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
-    io.sockets.emit('speed', {value: speed}); // sends updated speed to all clients
+// set static files directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+// user connect event
+io.on('connection', function(socket){
+  console.log('a user connected');
+
+    // write data to serialport
+    sp.open(function(err) {
+      if(err) {
+        console.log("Port open error: ", err);
+      }
+      else {
+        console.log("Port opened!");
+      }
+    });
+
+  // user disconnect event
+  socket.on('disconnect', function(){
+    console.log('user disconnected');
+    sp.close();
+  });
+
+  // user input event
+  socket.on('input', function(data){
+    var ctrlByte = new Buffer(1);
+    ctrlByte.writeUInt8(data.ctrlByte,0);
+    console.log('speed: ' + data.speed + ', steer: ' + data.steer + 
+        ', ControlByte: ' + ctrlByte.toString('hex'));
+
+    if(sp.isOpen()) {
+      console.log("Writing serial data: " + ctrlByte.toString('hex'));
+      sp.write(ctrlByte, function(err, res) {
+        if(err) {console.log(err);}
+      });
+    }
   });
 });
 
-console.log("running");
+http.listen(5000, function(){
+  console.log('listening on *:5000');
+});
+
