@@ -11,9 +11,9 @@
 //Functionality - finds the greatest common divisor of two values
 //Parameter: Two long int's to find their GCD
 //Returns: GCD else 0
-unsigned long int findGCD(unsigned long int a, unsigned long int b)
+unsigned char findGCD(unsigned char a, unsigned char b)
 {
-	unsigned long int c;
+	unsigned char c;
 	while(1){
 		c = a % b;
 		if( c == 0 ) { return b; }
@@ -28,8 +28,8 @@ typedef struct _task{
 	// Tasks should have members that include: state, period,
 	//a measurement of elapsed time, and a function pointer.
 	signed 	 char state; 		//Task's current state
-	unsigned long period; 		//Task period
-	unsigned long elapsedTime; 	//Time elapsed since last task tick
+	unsigned char period; 		//Task period
+	unsigned char elapsedTime; 	//Time elapsed since last task tick
 	int (*TickFct)(int); 		//Task tick function
 } task;
 
